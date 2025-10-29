@@ -1,7 +1,7 @@
 import React from "react";
 
 const PlaceOrder = () => {
-  return <div>PlaceOrder</div>;
+  return <div></div>;
 };
 
 export default PlaceOrder;
