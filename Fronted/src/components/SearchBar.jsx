@@ -4,20 +4,16 @@ import { assets } from "../assets/assets";
 import { useLocation } from "react-router-dom";
 
 const SearchBar = () => {
-  const { search, setSearch, showSearch, setShowSearch } = useContext(ShopContext);
+  const { search, setSearch, showSearch} =
+    useContext(ShopContext);
   const [visible, setVisible] = useState(false);
   const location = useLocation();
 
   useEffect(() => {
-    if (location.pathname.includes("collection")){
-      setVisible(true);
-    } else {
-      setVisible(false);
-    }
-  }, [location]);
+    setVisible(location.pathname.includes("collection") && showSearch);
+  }, [location.pathname, showSearch]);
 
-  
- return showSearch && visible ? (
+  return showSearch && visible ? (
     <div className="border-t border-b bg-gray-50 text-center transition-all duration-300 ease-in-out">
       <div className="inline-flex items-center justify-center border border-gray-400 px-5 py-2 gap-2 rounded-full mt-3">
         <input
@@ -31,14 +27,13 @@ const SearchBar = () => {
       </div>
 
       <img
-        onClick={() => setShowSearch(false)}
+        onClick={() => setSearch("")} // clear search text, keep UI visible
         className="inline w-3 cursor-pointer ml-3"
         src={assets.cross_icon}
-        alt="Close"
+        alt="Clear search"
       />
     </div>
   ) : null;
- 
 };
 
 export default SearchBar;
