@@ -27,7 +27,7 @@ const SearchBar = () => {
       </div>
 
       <img
-        onClick={() => setSearch("")} // clear search text, keep UI visible
+        onClick={() => setSearch("")}
         className="inline w-3 cursor-pointer ml-3"
         src={assets.cross_icon}
         alt="Clear search"
