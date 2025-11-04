@@ -4,7 +4,8 @@ import Title from "../components/Title";
 import { assets } from "../assets/assets";
 
 const Cart = () => {
-  const { products, currency, cartItems, setCartItems } = useContext(ShopContext);
+  const { products, currency, cartItems, setCartItems, updateQuantity } =
+    useContext(ShopContext);
   const [cartData, setCartData] = useState([]);
 
   // Build simplified cart data from nested structure
@@ -24,25 +25,6 @@ const Cart = () => {
     setCartData(tempData);
   }, [cartItems]);
 
-  // ✅ Update quantity directly from input
-  const handleQuantityChange = (productId, size, value) => {
-    if (value < 1) return; // prevent 0 or negative
-    const updatedCart = { ...cartItems };
-    updatedCart[productId][size] = Number(value);
-    setCartItems(updatedCart);
-  };
-
-  // ✅ Remove product from cart
-  const handleRemove = (productId, size) => {
-    const updatedCart = { ...cartItems };
-    delete updatedCart[productId][size];
-    // Clean up empty product objects
-    if (Object.keys(updatedCart[productId]).length === 0) {
-      delete updatedCart[productId];
-    }
-    setCartItems(updatedCart);
-  };
-
   return (
     <div className="border-t pt-14">
       <div className="text-2xl mb-3">
@@ -52,7 +34,9 @@ const Cart = () => {
       {/* Cart List */}
       <div>
         {cartData.length === 0 ? (
-          <p className="text-gray-500 mt-10 text-center">Your cart is empty 🛒</p>
+          <p className="text-gray-500 mt-10 text-center">
+            Your cart is empty 🛒
+          </p>
         ) : (
           cartData.map((item, index) => {
             const productData = products.find(
@@ -95,7 +79,9 @@ const Cart = () => {
                   min={1}
                   value={item.quantity}
                   onChange={(e) =>
-                    handleQuantityChange(item._id, item.size, e.target.value)
+                    e.target.value === "" || e.target.value === "0"
+                      ? null
+                      : updateQuantity(item._id, item.size, Number(e.target.value))
                   }
                 />
 
@@ -104,7 +90,7 @@ const Cart = () => {
                   className="w-4 mr-4 sm:w-5 cursor-pointer"
                   src={assets.bin_icon}
                   alt="Remove"
-                  onClick={() => handleRemove(item._id, item.size)}
+                  onClick={() => updateQuantity(item._id, item.size, 0)}
                 />
               </div>
             );
