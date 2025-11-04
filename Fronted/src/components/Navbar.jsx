@@ -7,7 +7,7 @@ const Navbar = () => {
 
   const [Visible , setVisible] = useState(false);
 
-  const {setShowSearch} = useContext(ShopContext)
+  const {setShowSearch, getCartCount} = useContext(ShopContext)
 
   return (
     <div className="flex items-center justify-between py-5 font-medium">
@@ -59,8 +59,9 @@ const Navbar = () => {
             className="w-5 cursor-pointer"
             alt="Cart"
           />
-          {/* <p className="absolute right-[-5px] bottom-[-5px] w-4 h-4 text-center leading-4 bg-black text-white rounded-full text-[8px]">
-          </p> */}
+          <p className="absolute right-[-5px] bottom-[-5px] w-4 h-4 text-center leading-4 bg-black text-white rounded-full text-[8px]">
+            {getCartCount()}
+          </p>
         </Link>
         <img onClick={()=> setVisible(true)} src={assets.menu_icon} className="w-5 cursor-pointer sm:hidden" alt="" />
       </div>

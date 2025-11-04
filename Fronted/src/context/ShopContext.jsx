@@ -35,6 +35,18 @@ const ShopContextProvider = (props) => {
     toast.success("Product added to cart");
   };
 
+  const getCartCount = () => {
+    let totalCount = 0;
+    for (const productId in cartItems) {
+      for (const size in cartItems[productId]) {
+        if (cartItems[productId][size] > 0) {
+          totalCount += cartItems[productId][size];
+        }
+      }
+    }
+    return totalCount;
+  };
+
   useEffect(() => {
     console.log("Cart Items Updated:", cartItems);
   }, [cartItems]);
@@ -49,6 +61,7 @@ const ShopContextProvider = (props) => {
     setShowSearch,
     cartItems,
     addToCart,
+    getCartCount,
   };
 
   return (

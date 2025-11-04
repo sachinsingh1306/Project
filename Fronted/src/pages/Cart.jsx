@@ -1,7 +1,118 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { ShopContext } from "../context/ShopContext";
+import Title from "../components/Title";
+import { assets } from "../assets/assets";
 
 const Cart = () => {
-  return <div></div>;
+  const { products, currency, cartItems, setCartItems } = useContext(ShopContext);
+  const [cartData, setCartData] = useState([]);
+
+  // Build simplified cart data from nested structure
+  useEffect(() => {
+    const tempData = [];
+    for (const productId in cartItems) {
+      for (const size in cartItems[productId]) {
+        if (cartItems[productId][size] > 0) {
+          tempData.push({
+            _id: productId,
+            size,
+            quantity: cartItems[productId][size],
+          });
+        }
+      }
+    }
+    setCartData(tempData);
+  }, [cartItems]);
+
+  // ✅ Update quantity directly from input
+  const handleQuantityChange = (productId, size, value) => {
+    if (value < 1) return; // prevent 0 or negative
+    const updatedCart = { ...cartItems };
+    updatedCart[productId][size] = Number(value);
+    setCartItems(updatedCart);
+  };
+
+  // ✅ Remove product from cart
+  const handleRemove = (productId, size) => {
+    const updatedCart = { ...cartItems };
+    delete updatedCart[productId][size];
+    // Clean up empty product objects
+    if (Object.keys(updatedCart[productId]).length === 0) {
+      delete updatedCart[productId];
+    }
+    setCartItems(updatedCart);
+  };
+
+  return (
+    <div className="border-t pt-14">
+      <div className="text-2xl mb-3">
+        <Title text1={"YOUR"} text2={"CART"} />
+      </div>
+
+      {/* Cart List */}
+      <div>
+        {cartData.length === 0 ? (
+          <p className="text-gray-500 mt-10 text-center">Your cart is empty 🛒</p>
+        ) : (
+          cartData.map((item, index) => {
+            const productData = products.find(
+              (product) => product._id === item._id
+            );
+            if (!productData) return null;
+
+            return (
+              <div
+                key={index}
+                className="py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4"
+              >
+                {/* Product info */}
+                <div className="flex items-start gap-6">
+                  <img
+                    className="w-16 sm:w-20"
+                    src={productData.image[0]}
+                    alt={productData.name}
+                  />
+                  <div>
+                    <p className="text-xs sm:text-lg font-medium">
+                      {productData.name}
+                    </p>
+                    <div className="flex items-center gap-5 mt-2">
+                      <p>
+                        {currency}
+                        {productData.price.toFixed(2)}
+                      </p>
+                      <p className="px-2 sm:px-3 sm:py-1 border bg-slate-50 text-sm rounded">
+                        {item.size}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quantity Input */}
+                <input
+                  className="border max-w-10 sm:max-w-20 px-1 sm:px-2 py-1 text-center"
+                  type="number"
+                  min={1}
+                  value={item.quantity}
+                  onChange={(e) =>
+                    handleQuantityChange(item._id, item.size, e.target.value)
+                  }
+                />
+
+                {/* Delete Icon */}
+                <img
+                  className="w-4 mr-4 sm:w-5 cursor-pointer"
+                  src={assets.bin_icon}
+                  alt="Remove"
+                  onClick={() => handleRemove(item._id, item.size)}
+                />
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
 };
 
 export default Cart;

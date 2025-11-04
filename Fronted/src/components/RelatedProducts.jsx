@@ -9,18 +9,14 @@ const RelatedProducts = ({ category, subCategory }) => {
 
   useEffect(() => {
     if (products.length > 0) {
-      // ✅ Clone array
       let productsCopy = [...products];
 
-      // ✅ Filter by category
-      productsCopy = productsCopy.filter((item) => item.category === category);
-
-      // ✅ Filter by subCategory
+      // Filter by category and subcategory
       productsCopy = productsCopy.filter(
-        (item) => item.subCategory === subCategory
+        (item) => item.category === category && item.subCategory === subCategory
       );
 
-      // ✅ Set up to 5 related items
+      // Limit to 5 products
       setRelated(productsCopy.slice(0, 5));
     }
   }, [products, category, subCategory]);
