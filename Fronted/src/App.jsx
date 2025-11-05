@@ -15,7 +15,6 @@ import SearchBar from "./components/SearchBar";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-
 export default function App() {
   return (
     <div className="px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]">
@@ -30,7 +29,8 @@ export default function App() {
         <Route path="/product/:productId" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/placeorder/:productId" element={<PlaceOrder />} />
+        {/* ✅ FIXED: Removed :productId */}
+        <Route path="/place-order" element={<PlaceOrder />} />
         <Route path="/order" element={<Orders />} />
       </Routes>
       <Footer />
