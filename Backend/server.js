@@ -9,12 +9,14 @@ import Stripe from "stripe";
 import validator from "validator";
 import cloudinary from "cloudinary";
 import bcrypt from "bcrypt";
+import connectDB from "./config/mongodb.js";
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+connectDB();
 
 // --------------------- Middlewares ---------------------
 app.use(express.json());
@@ -29,4 +31,3 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Server started on PORT ${PORT}`);
 });
-
