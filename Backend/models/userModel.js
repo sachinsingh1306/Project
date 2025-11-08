@@ -10,8 +10,6 @@ const userSchema = new mongoose.Schema(
   { minimize: false }
 );
 
-// ✅ Correct way to define or reuse model
 const userModel = mongoose.models.user || mongoose.model("user", userSchema);
 
-// ✅ Export the MODEL, not the SCHEMA
 export default userModel;
