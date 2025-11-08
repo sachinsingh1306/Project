@@ -5,24 +5,25 @@ import connectDB from "./config/mongodb.js";
 import connectCloudinary from "./config/cloudinary.js";
 import userRouter from "./routes/userRoute.js";
 
-// Load environment variables
+// ✅ Load environment variables
 dotenv.config();
 
+// ✅ App setup
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Connect to DB and Cloudinary
+// ✅ Connect Database and Cloudinary
 connectDB();
 connectCloudinary();
 
-// --------------------- Middlewares ---------------------
+// ✅ Middlewares
 app.use(express.json());
 app.use(cors());
 
-// --------------------- API Endpoints ---------------------
+// ✅ Routes
 app.use('/api/user', userRouter);
 
-// --------------------- Server Start ---------------------
+// ✅ Start Server
 app.listen(PORT, () => {
   console.log(`✅ Server started on PORT ${PORT}`);
 });
