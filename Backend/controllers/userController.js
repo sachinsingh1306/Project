@@ -5,11 +5,10 @@ import jwt from "jsonwebtoken";
 
 // ✅ Function to create JWT token
 const createToken = (id) => {
-  return jwt.sign(
-    { id },
-    process.env.JWT_SECRET || "defaultsecret",
-    { expiresIn: "7d" }
-  );
+  console.log("🧩 Creating token with secret:", process.env.JWT_SECRET);
+  return jwt.sign({ id }, process.env.JWT_SECRET || "defaultsecret", {
+    expiresIn: "7d",
+  });
 };
 
 // ✅ User Login
@@ -47,7 +46,10 @@ const registerUser = async (req, res) => {
       return res.json({ success: false, message: "User Already Exists" });
 
     if (!validator.isEmail(email))
-      return res.json({ success: false, message: "Please Enter a Valid Email" });
+      return res.json({
+        success: false,
+        message: "Please Enter a Valid Email",
+      });
 
     if (password.length < 8)
       return res.json({
