@@ -1,8 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import productModel from "../models/productModel.js";
 
-
-
 // ✅ Function to add a new product
 const addProduct = async (req, res) => {
   try {
@@ -17,14 +15,16 @@ const addProduct = async (req, res) => {
       bestseller,
     } = req.body;
 
-
     let parsedSizes = [];
     try {
-      parsedSizes = JSON.parse(sizes);
+      if (Array.isArray(sizes)) {
+        parsedSizes = sizes;
+      } else {
+        parsedSizes = JSON.parse(sizes);
+      }
     } catch {
-      parsedSizes = [];
+      parsedSizes = [sizes];
     }
-
 
     const image1 = req.files.image1 && req.files.image1[0];
     const image2 = req.files.image2 && req.files.image2[0];
@@ -44,48 +44,64 @@ const addProduct = async (req, res) => {
       })
     );
 
-    console.log(
-      name,
-      description,
-      price,
-      image,
-      category,
-      subCategory,
-      sizes,
-      bestseller
-    );
-
     const productData = {
       name,
       description,
       price: Number(price),
       category,
       subCategory,
-      sizes: parsedSizes(sizes),
+      sizes: parsedSizes,
       bestseller: bestseller === "true" ? true : false,
       image: imagesUrl,
       date: Date.now(),
     };
 
-    console.log(productData);
-
     const product = new productModel(productData);
     await product.save();
 
-    res.json({ sucess: true, message: "Product Added" });
+    res.json({ success: true, message: "Product Added" });
   } catch (error) {
     console.log(error);
-    res.json({ sucess: false, message: error.message });
+    res.json({ success: false, message: error.message });
   }
 };
 
 // ✅ Function to list all products
-const listProducts = async (req, res) => {};
+const listProducts = async (req, res) => {
+  try {
+    const products = await productModel.find({});
+    res.json({ success: true, products });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-// ✅ Function to remove a product by ID
-const removeProduct = async (req, res) => {};
+// ✅ Function to remove a product by ID (use req.params.id)
+const removeProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    await productModel.findByIdAndDelete(id);
+    res.json({ success: true, message: "Product Removed" });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
-// ✅ Function to get single product info by ID
-const singleProduct = async (req, res) => {};
+// ✅ Function to get single product info by ID (use req.params.id)
+const singleProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.json({ success: false, message: "Product not found" });
+    }
+    res.json({ success: true, product });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 export { addProduct, listProducts, removeProduct, singleProduct };
