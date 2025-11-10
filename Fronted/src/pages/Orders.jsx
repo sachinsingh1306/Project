@@ -12,26 +12,29 @@ const Orders = () => {
       if (!token) return;
 
       const response = await axios.post(
-        `${backendUrl}/api/order/userorder`, // ✅ correct endpoint
+        `${backendUrl}/api/order/userorders`,
         {},
         { headers: { token } }
       );
 
       if (response.data.success) {
-        const ordersArray = response.data.orders || response.data.order || [];
+        const ordersArray = response.data.orders || [];
 
         const allOrderItems = [];
         ordersArray.forEach((order) => {
           order.items.forEach((item) => {
-            item.status = order.status;
-            item.payment = order.payment;
-            item.paymentMethod = order.paymentMethod;
-            item.date = order.date;
-            allOrderItems.push(item);
+            allOrderItems.push({
+              ...item.itemId, // ✅ name, price, image
+              quantity: item.quantity,
+              size: item.size,
+              status: order.status,
+              paymentMethod: order.paymentMethod,
+              date: order.date,
+            });
           });
         });
 
-        setOrderData(allOrderItems);
+        setOrderData(allOrderItems.reverse());
       }
     } catch (error) {
       console.error("Error loading orders:", error);
@@ -44,12 +47,10 @@ const Orders = () => {
 
   return (
     <div className="border-t pt-16">
-      {/* Title */}
       <div className="text-2xl mb-8">
         <Title text1={"MY"} text2={"ORDERS"} />
       </div>
 
-      {/* Orders List */}
       <div>
         {orderData.length === 0 ? (
           <p className="text-gray-500">No orders found.</p>
@@ -59,14 +60,13 @@ const Orders = () => {
               key={index}
               className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
             >
-              {/* Left - Product Info */}
+              {/* Product Info */}
               <div className="flex items-start gap-6 text-sm">
                 <img
-                  className="w-16 sm:w-20"
+                  className="w-16 sm:w-20 object-cover rounded"
                   src={item.image?.[0]}
                   alt={item.name}
                 />
-
                 <div>
                   <p className="sm:text-base font-medium">{item.name}</p>
 
@@ -89,10 +89,15 @@ const Orders = () => {
                       })}
                     </span>
                   </p>
+
+                  <p className="mt-2 text-sm">
+                    Payment:{" "}
+                    <span className="text-gray-400">{item.paymentMethod}</span>
+                  </p>
                 </div>
               </div>
 
-              {/* Right - Status + Track */}
+              {/* Status + Track */}
               <div className="md:w-1/2 flex justify-between items-center">
                 <div className="flex items-center gap-2">
                   <p

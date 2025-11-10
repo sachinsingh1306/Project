@@ -45,16 +45,27 @@ const placeOrder = async (req, res) => {
 const placeOrderStripe = async (req, res) => {};
 const placeOrderRazorpay = async (req, res) => {};
 const allOrders = async (req, res) => {};
+
 const userOrders = async (req, res) => {
   try {
-    const { userId } = req.body;
-    const order = await orderModel.find({ userId });
-    res.json({ success: true, order });
+    const userId = req.userId; // ✅ from auth middleware
+
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+
+    // ✅ populate product info (image, name, price)
+    const orders = await orderModel
+      .find({ userId })
+      .populate("items.itemId", "name image price");
+
+    res.json({ success: true, orders }); // ✅ note plural: orders
   } catch (error) {
-    console.log(error);
-    res.json({ success: false, message: error.message });
+    console.error("Error fetching user orders:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
+
 const updateStatus = async (req, res) => {
   try {
   } catch (error) {
