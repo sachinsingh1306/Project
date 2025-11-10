@@ -8,11 +8,15 @@ const placeOrder = async (req, res) => {
     const userId = req.userId; // ✅ Comes from auth middleware
 
     if (!userId) {
-      return res.status(401).json({ success: false, message: "Unauthorized user" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Unauthorized user" });
     }
 
     if (!items || !amount || !address) {
-      return res.status(400).json({ success: false, message: "Missing order details" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Missing order details" });
     }
 
     const orderData = {
@@ -41,8 +45,22 @@ const placeOrder = async (req, res) => {
 const placeOrderStripe = async (req, res) => {};
 const placeOrderRazorpay = async (req, res) => {};
 const allOrders = async (req, res) => {};
-const userOrders = async (req, res) => {};
-const updateStatus = async (req, res) => {};
+const userOrders = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const order = await orderModel.find({ userId });
+    res.json({ success: true, order });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
+const updateStatus = async (req, res) => {
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export {
   placeOrder,

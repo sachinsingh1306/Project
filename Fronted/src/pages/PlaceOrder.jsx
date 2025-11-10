@@ -70,8 +70,7 @@ const PlaceOrder = () => {
             `${backendUrl}/api/order/place`,
             orderData,
             { headers: { token } }
-          );
-
+          )
           if (response.data.success) {
             setCartItems({});
             navigate("/orders");

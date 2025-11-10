@@ -1,9 +1,45 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import axios from "axios";
 import { ShopContext } from "../context/ShopContext";
 import Title from "../components/Title";
 
 const Orders = () => {
-  const { products, currency } = useContext(ShopContext);
+  const { backendUrl, token, currency } = useContext(ShopContext);
+  const [orderData, setOrderData] = useState([]);
+
+  const loadOrderData = async () => {
+    try {
+      if (!token) return;
+
+      const response = await axios.post(
+        `${backendUrl}/api/order/userorders`,
+        {},
+        { headers: { token } }
+      );
+
+      if (response.data.success) {
+        let allOrderItems = [];
+
+        response.data.orders.forEach((order) => {
+          order.items.forEach((item) => {
+            item.status = order.status || "Processing";
+            item.payment = order.payment;
+            item.paymentMethod = order.paymentMethod;
+            item.date = order.date;
+            allOrderItems.push(item);
+          });
+        });
+
+        setOrderData(allOrderItems);
+      }
+    } catch (error) {
+      console.log("Error loading orders:", error);
+    }
+  };
+
+  useEffect(() => {
+    loadOrderData();
+  }, [token]);
 
   return (
     <div className="border-t pt-16">
@@ -14,46 +50,67 @@ const Orders = () => {
 
       {/* Orders List */}
       <div>
-        {products.slice(1, 4).map((item, index) => (
-          <div
-            key={index}
-            className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
-          >
-            {/* Left - Product Info */}
-            <div className="flex items-start gap-6 text-sm">
-              <img className="w-16 sm:w-20" src={item.image[0]} alt={item.name} />
+        {orderData.length === 0 ? (
+          <p className="text-gray-500">No orders found.</p>
+        ) : (
+          orderData.map((item, index) => (
+            <div
+              key={index}
+              className="py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-6"
+            >
+              {/* Left - Product Info */}
+              <div className="flex items-start gap-6 text-sm">
+                <img
+                  className="w-16 sm:w-20"
+                  src={item.image?.[0]}
+                  alt={item.name}
+                />
 
-              <div>
-                <p className="sm:text-base font-medium">{item.name}</p>
+                <div>
+                  <p className="sm:text-base font-medium">{item.name}</p>
 
-                <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
-                  <p className="text-lg">
-                    {currency}
-                    {item.price}
+                  <div className="flex items-center gap-3 mt-2 text-base text-gray-700">
+                    <p className="text-lg">
+                      {currency}
+                      {item.price}
+                    </p>
+                    <p>Quantity: {item.quantity || 1}</p>
+                    <p>Size: {item.size || "M"}</p>
+                  </div>
+
+                  <p className="mt-2 text-sm">
+                    Date:{" "}
+                    <span className="text-gray-400">
+                      {new Date(item.date).toLocaleDateString("en-GB", {
+                        day: "2-digit",
+                        month: "short",
+                        year: "numeric",
+                      })}
+                    </span>
                   </p>
-                  <p>Quantity: 1</p>
-                  <p>Size: M</p>
+                </div>
+              </div>
+
+              {/* Right - Status + Track */}
+              <div className="md:w-1/2 flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <p
+                    className={`min-w-2 h-2 rounded-full ${
+                      item.status === "Delivered"
+                        ? "bg-green-500"
+                        : "bg-yellow-500"
+                    }`}
+                  ></p>
+                  <p className="text-sm md:text-base">{item.status}</p>
                 </div>
 
-                <p className="mt-2 text-sm">
-                  Date: <span className="text-gray-400">25 Jan, 2025</span>
-                </p>
+                <button className="bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
+                  Track Order
+                </button>
               </div>
             </div>
-
-            {/* Right - Status + Track */}
-            <div className="md:w-1/2 flex justify-between items-center">
-              <div className="flex items-center gap-2">
-                <p className="min-w-2 h-2 rounded-full bg-green-500"></p>
-                <p className="text-sm md:text-base">Ready to ship</p>
-              </div>
-
-              <button className="bg-black text-white text-sm px-4 py-2 rounded hover:bg-gray-800">
-                Track Order
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </div>
   );
