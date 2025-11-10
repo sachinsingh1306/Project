@@ -12,16 +12,12 @@ import Login from "./components/Login";
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
-
-  // ✅ Store token persistently
-  useEffect(() => {
-    if (token) {
+   
+    const [token, setToken] = useState(localStorage.getItem("token") || "");
+  
+    useEffect(() => {
       localStorage.setItem("token", token);
-    } else {
-      localStorage.removeItem("token");
-    }
-  }, [token]);
+    }, [token]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
