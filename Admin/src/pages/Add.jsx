@@ -4,8 +4,7 @@ import { assets } from "../assets/assets";
 import axios from "axios";
 import { backendUrl } from "../App";
 
-const Add = ({token}) => {
-
+const Add = ({ token }) => {
   const [image1, setImage1] = useState(false);
   const [image2, setImage2] = useState(false);
   const [image3, setImage3] = useState(false);
@@ -43,16 +42,39 @@ const Add = ({token}) => {
       formData.append("image3", image3);
       formData.append("image4", image4);
 
-
       const response = await axios.post(
         backendUrl + "/api/product/add",
-        formData,{headers:{token}}
+        formData,
+        { headers: { token } }
       );
+
+      if (response.data.success) {
+        alert("Product added successfully!"); // ✅ show alert
+
+        // ✅ clear the form
+        setName("");
+        setDescription("");
+        setPrice("");
+        setCategory("Men");
+        setSubCategory("Topwear");
+        setBestseller(false);
+        setSizes([]);
+        setImage1(false);
+        setImage2(false);
+        setImage3(false);
+        setImage4(false);
+      } else {
+        alert("Failed to add product: " + response.data.message);
+      }
+
       console.log(response.data);
-      
       
     } catch (error) {
       console.error("Add Product Error:", error);
+      alert(
+        "Error adding product: " +
+          (error.response?.data?.message || error.message)
+      );
     }
   };
 
@@ -76,7 +98,7 @@ const Add = ({token}) => {
                 type="file"
                 id={`image${i + 1}`}
                 hidden
-                required={i === 0} // make first image required
+                required={i === 0}
                 onChange={(e) => {
                   if (i === 0) setImage1(e.target.files[0]);
                   if (i === 1) setImage2(e.target.files[0]);
@@ -206,4 +228,4 @@ const Add = ({token}) => {
   );
 };
 
-export default Add;  
+export default Add;
