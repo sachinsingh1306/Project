@@ -10,7 +10,7 @@ import Login from "./components/Login";
 
 // ✅ Get backend URL from environment variables (Vite)
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
-
+export const currency = '$';
 const App = () => {
    
     const [token, setToken] = useState(localStorage.getItem("token") || "");

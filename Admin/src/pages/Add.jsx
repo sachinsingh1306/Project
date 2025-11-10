@@ -1,4 +1,3 @@
-// src/pages/Add.jsx
 import React, { useState } from "react";
 import { assets } from "../assets/assets";
 import axios from "axios";
@@ -49,9 +48,7 @@ const Add = ({ token }) => {
       );
 
       if (response.data.success) {
-        alert("Product added successfully!"); // ✅ show alert
-
-        // ✅ clear the form
+        alert("Product added successfully!");
         setName("");
         setDescription("");
         setPrice("");
