@@ -29,9 +29,8 @@ export default function App() {
         <Route path="/product/:productId" element={<Product />} />
         <Route path="/cart" element={<Cart />} />
         <Route path="/login" element={<Login />} />
-        {/* ✅ FIXED: Removed :productId */}
         <Route path="/place-order" element={<PlaceOrder />} />
-        <Route path="/order" element={<Orders />} />
+        <Route path="/orders" element={<Orders />} />
       </Routes>
       <Footer />
     </div>
