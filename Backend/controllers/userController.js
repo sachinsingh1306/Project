@@ -5,7 +5,7 @@ import jwt from "jsonwebtoken";
 
 // ✅ Function to create JWT token
 const createToken = (id) => {
-  console.log("🧩 Creating token with secret:", process.env.JWT_SECRET);
+  console.log("Creating token with secret:", process.env.JWT_SECRET);
   return jwt.sign({ id }, process.env.JWT_SECRET || "defaultsecret", {
     expiresIn: "7d",
   });

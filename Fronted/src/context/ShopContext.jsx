@@ -19,19 +19,34 @@ const ShopContextProvider = ({ children }) => {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
 
-  const addToCart = (itemId, size) => {
+  const addToCart = async (itemId, size) => {
     if (!size) {
       toast.error("Select product size");
       return;
     }
+
     let cartData = structuredClone(cartItems);
     if (cartData[itemId]) {
       cartData[itemId][size] = (cartData[itemId][size] || 0) + 1;
     } else {
       cartData[itemId] = { [size]: 1 };
     }
+
     setCartItems(cartData);
     toast.success("Product added to cart");
+
+    if (token) {
+      try {
+        await axios.post(
+          `${backendUrl}/api/cart/add`, // <-- comma added
+          { itemId, size },
+          { headers: { token } }
+        );
+      } catch (error) {
+        console.log(error);
+        toast.error(error.message);
+      }
+    }
   };
 
   const getCartCount = () => {
