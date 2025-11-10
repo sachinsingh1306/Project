@@ -92,7 +92,7 @@ const removeProduct = async (req, res) => {
 // ✅ Function to get single product info by ID (use req.params.id)
 const singleProduct = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { productId } = req.params;
     const product = await productModel.findById(id);
     if (!product) {
       return res.json({ success: false, message: "Product not found" });

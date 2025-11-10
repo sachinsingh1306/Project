@@ -82,7 +82,34 @@ const registerUser = async (req, res) => {
 
 // ✅ Admin Login (temporary)
 const adminLogin = async (req, res) => {
-  res.json({ success: true, message: "Admin route working" });
+  try {
+    const { email, password } = req.body;
+
+    // Validate credentials
+    if (
+      email === process.env.ADMIN_EMAIL &&
+      password === process.env.ADMIN_PASSWORD
+    ) {
+      const token = jwt.sign(
+        { role: "admin" },
+        process.env.JWT_SECRET || "defaultsecret",
+        { expiresIn: "7d" }
+      );
+      return res.json({
+        success: true,
+        message: "Admin login successful",
+        token,
+      });
+    } else {
+      return res.json({
+        success: false,
+        message: "Invalid admin credentials",
+      });
+    }
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
 };
 
 export { loginUser, registerUser, adminLogin };
