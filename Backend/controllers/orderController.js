@@ -46,6 +46,7 @@ const placeOrderStripe = async (req, res) => {};
 const placeOrderRazorpay = async (req, res) => {};
 const allOrders = async (req, res) => {};
 
+
 const userOrders = async (req, res) => {
   try {
     const userId = req.userId; // ✅ from auth middleware
