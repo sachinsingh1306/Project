@@ -12,17 +12,18 @@ const Orders = () => {
       if (!token) return;
 
       const response = await axios.post(
-        `${backendUrl}/api/order/userorders`,
+        `${backendUrl}/api/order/userorder`, // ✅ correct endpoint
         {},
         { headers: { token } }
       );
 
       if (response.data.success) {
-        let allOrderItems = [];
+        const ordersArray = response.data.orders || response.data.order || [];
 
-        response.data.orders.forEach((order) => {
+        const allOrderItems = [];
+        ordersArray.forEach((order) => {
           order.items.forEach((item) => {
-            item.status = order.status || "Processing";
+            item.status = order.status;
             item.payment = order.payment;
             item.paymentMethod = order.paymentMethod;
             item.date = order.date;
@@ -33,7 +34,7 @@ const Orders = () => {
         setOrderData(allOrderItems);
       }
     } catch (error) {
-      console.log("Error loading orders:", error);
+      console.error("Error loading orders:", error);
     }
   };
 
