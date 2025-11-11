@@ -78,10 +78,10 @@ const userOrders = async (req, res) => {
 const updateStatus = async (req, res) => {
   try {
     const { orderId, status } = req.body;
-    await orderModel.findByIdAndUpdate(orderId, { status });
-    res.jso({ success: true, message: "Status Update" });
+    await orderModel.findByIdAndUpdate(orderId, {status})
+    res.jso({success:true, message:'Status Update'})
   } catch (error) {
-    console.log("Error fetching user orders:", error);
+   console.log("Error fetching user orders:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
