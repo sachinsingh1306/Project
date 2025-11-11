@@ -44,12 +44,20 @@ const placeOrder = async (req, res) => {
 
 const placeOrderStripe = async (req, res) => {};
 const placeOrderRazorpay = async (req, res) => {};
-const allOrders = async (req, res) => {};
 
+const allOrders = async (req, res) => {
+  try {
+    const orders = await orderModel.find({});
+    res.json({ success: true, order });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false, message: error.message });
+  }
+};
 
 const userOrders = async (req, res) => {
   try {
-    const userId = req.userId; // ✅ from auth middleware
+    const userId = req.userId;
 
     if (!userId) {
       return res.status(401).json({ success: false, message: "Unauthorized" });
@@ -60,17 +68,21 @@ const userOrders = async (req, res) => {
       .find({ userId })
       .populate("items.itemId", "name image price");
 
-    res.json({ success: true, orders }); // ✅ note plural: orders
+    res.json({ success: true, orders });
   } catch (error) {
-    console.error("Error fetching user orders:", error);
+    console.log("Error fetching user orders:", error);
     res.status(500).json({ success: false, message: error.message });
   }
 };
 
 const updateStatus = async (req, res) => {
   try {
+    const { orderId, status } = req.body;
+    await orderModel.findByIdAndUpdate(orderId, { status });
+    res.jso({ success: true, message: "Status Update" });
   } catch (error) {
-    console.log(error);
+    console.log("Error fetching user orders:", error);
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

@@ -1,4 +1,3 @@
-// src/App.jsx
 import React, { useState, useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
@@ -9,15 +8,15 @@ import Orders from "./pages/Orders";
 import Login from "./components/Login";
 
 // ✅ Get backend URL from environment variables (Vite)
-export const backendUrl = import.meta.env.VITE_BACKEND_URL;
-export const currency = '$';
+export const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:4000";
+export const currency = "₹";
+
 const App = () => {
-   
-    const [token, setToken] = useState(localStorage.getItem("token") || "");
-  
-    useEffect(() => {
-      localStorage.setItem("token", token);
-    }, [token]);
+  const [token, setToken] = useState(localStorage.getItem("token") || "");
+
+  useEffect(() => {
+    localStorage.setItem("token", token);
+  }, [token]);
 
   return (
     <div className="bg-gray-50 min-h-screen">
